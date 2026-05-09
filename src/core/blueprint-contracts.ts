@@ -35,7 +35,21 @@ export const knownSectionKinds: SectionKind[] = [
   "courses",
   "progress",
   "instructors",
-  "map"
+  "map",
+  "lookbook",
+  "products",
+  "cart",
+  "checkout",
+  "rooms",
+  "weather",
+  "artists",
+  "audio",
+  "tournament",
+  "rankings",
+  "timeline",
+  "availability",
+  "wishlist",
+  "concierge"
 ];
 
 export const defaultTheme: ThemeSettings = {

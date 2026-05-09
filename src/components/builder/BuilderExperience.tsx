@@ -153,11 +153,29 @@ export function BuilderExperience({ initialPrompt = "" }: { initialPrompt?: stri
 
     pushMessage({ role: "event", text: "Reading refinement intent...", streaming: true });
     window.setTimeout(() => pushMessage({ role: "event", text: "Preparing safe schema patch..." }), 260);
-    window.setTimeout(() => {
+    window.setTimeout(async () => {
       const normalized = normalizeCommand(trimmed);
-      const refined = refineProject(normalized, result.schema);
-      updateSchema(refined.schema, normalized);
-      pushMessage({ role: "ai", text: `${refined.explanation} Preview synced.` });
+      try {
+        const response = await fetch("/api/refine", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            command: normalized,
+            schema: result.schema,
+            context: {
+              activePageId: result.schema.pages[0]?.id,
+              affectedSectionIds: result.schema.pages[0]?.sections.slice(0, 4).map((section) => section.id)
+            }
+          })
+        });
+        const refined = (await response.json()) as { schema: ProjectSchema; explanation: string; source: string };
+        updateSchema(refined.schema, normalized);
+        pushMessage({ role: "ai", text: `${refined.explanation} Preview synced via ${refined.source}.` });
+      } catch {
+        const refined = refineProject(normalized, result.schema);
+        updateSchema(refined.schema, normalized);
+        pushMessage({ role: "ai", text: `${refined.explanation} Preview synced locally.` });
+      }
     }, 560);
   }
 

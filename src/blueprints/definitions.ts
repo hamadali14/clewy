@@ -313,7 +313,371 @@ export const realBlueprints: BlueprintDefinition[] = [
   })
 ];
 
+const additionalBlueprintSpecs: Array<{
+  key: string;
+  label: string;
+  niche: Niche;
+  features: string[];
+  styles: StyleToken[];
+  keywords: string[];
+  title: string;
+  description: string;
+  accent: string;
+  palette: string[];
+  visualIdentity: string;
+  sections: SectionKind[];
+}> = [
+  {
+    key: "modern-barbershop",
+    label: "Modern Barbershop",
+    niche: "barbershop",
+    features: ["booking", "services", "barber profiles", "pricing", "ambient audio"],
+    styles: ["dark", "luxury", "premium"],
+    keywords: ["barber", "barbershop", "haircut", "shave", "beard", "grooming", "fade"],
+    title: "Blackline Barber Co.",
+    description: "Gritty luxury barbershop with editorial masculinity, magnetic menus, booking timeline and ambient lounge feel.",
+    accent: "#c08457",
+    palette: ["#060403", "#c08457", "#2a1710", "#f1e4d2"],
+    visualIdentity: "Gritty luxury, textured overlays, asymmetrical split hero, shaving cinema and magnetic booking CTA.",
+    sections: ["hero", "services", "timeline", "profiles", "pricing", "booking", "audio"]
+  },
+  {
+    key: "tattoo-studio",
+    label: "Tattoo Studio",
+    niche: "tattoo",
+    features: ["artist profiles", "portfolio", "booking", "consultation", "fullscreen gallery"],
+    styles: ["dark", "modern", "premium"],
+    keywords: ["tattoo", "ink", "artist", "piercing", "flash", "tattoo studio"],
+    title: "Black Veil Ink",
+    description: "Brutalist dark tattoo studio with ink reveal transitions, horizontal gallery and artist booking flows.",
+    accent: "#ef4444",
+    palette: ["#050505", "#ef4444", "#e5e7eb", "#111111"],
+    visualIdentity: "Brutalist dark UI, ink masks, immersive fullscreen gallery and edgy artist transitions.",
+    sections: ["hero", "portfolio", "artists", "gallery", "booking", "faq", "cta"]
+  },
+  {
+    key: "coffee-shop",
+    label: "Coffee Shop",
+    niche: "coffee",
+    features: ["menu", "hours", "subscription", "location", "events"],
+    styles: ["friendly", "modern", "premium"],
+    keywords: ["coffee", "cafe", "espresso", "roastery", "bakery", "latte"],
+    title: "Kanso Coffee Bar",
+    description: "Warm neighborhood coffee site with roastery storytelling, tactile menu and morning ritual interactions.",
+    accent: "#b77946",
+    palette: ["#1c120c", "#b77946", "#f4dfc8", "#fff8ef"],
+    visualIdentity: "Warm editorial cafe rhythm, tactile paper textures, slow morning motion and menu microinteractions.",
+    sections: ["hero", "menu", "hours", "story", "products", "gallery", "contact"]
+  },
+  {
+    key: "fashion-brand",
+    label: "Fashion Brand",
+    niche: "fashion",
+    features: ["lookbook", "products", "cart", "wishlist", "checkout"],
+    styles: ["minimal", "luxury", "premium"],
+    keywords: ["fashion", "clothing", "runway", "lookbook", "apparel", "collection"],
+    title: "Vera Atlas",
+    description: "Editorial fashion brand with runway composition, horizontal motion, lookbook, cart and checkout flow.",
+    accent: "#f5f5f4",
+    palette: ["#050505", "#f5f5f4", "#b91c1c", "#d6d3d1"],
+    visualIdentity: "Runway editorial layout, oversized typography, horizontal lookbook and cinematic image transitions.",
+    sections: ["hero", "lookbook", "products", "wishlist", "cart", "checkout", "cta"]
+  },
+  {
+    key: "jewelry-store",
+    label: "Jewelry Store",
+    niche: "jewelry",
+    features: ["products", "variants", "wishlist", "cart", "checkout", "appointments"],
+    styles: ["luxury", "minimal", "premium"],
+    keywords: ["jewelry", "jewellery", "rings", "diamonds", "necklace", "bracelet", "engagement"],
+    title: "Liora Fine Jewelry",
+    description: "Pearl-black luxury ecommerce for fine jewelry with product variants, wishlist and concierge appointment flow.",
+    accent: "#e8d8a8",
+    palette: ["#060504", "#e8d8a8", "#fff7e6", "#2a2117"],
+    visualIdentity: "Macro jewelry lighting, quiet luxury, floating product loupe and concierge cart interactions.",
+    sections: ["hero", "products", "wishlist", "cart", "checkout", "concierge", "gallery"]
+  },
+  {
+    key: "architecture-studio",
+    label: "Architecture Studio",
+    niche: "architecture",
+    features: ["portfolio", "project storytelling", "studio profile", "inquiry"],
+    styles: ["minimal", "premium", "modern"],
+    keywords: ["architecture", "architect", "studio", "buildings", "urban", "portfolio"],
+    title: "Atelier Forma",
+    description: "Ultra-minimal architecture studio with giant whitespace, fullscreen project storytelling and calm transitions.",
+    accent: "#111827",
+    palette: ["#fafafa", "#111827", "#d4d4d4", "#ffffff"],
+    visualIdentity: "Giant whitespace, architectural grid, measured transitions and fullscreen portfolio chapters.",
+    sections: ["hero", "portfolio", "story", "stats", "profiles", "contact", "cta"]
+  },
+  {
+    key: "interior-design-agency",
+    label: "Interior Design Agency",
+    niche: "interior",
+    features: ["portfolio", "packages", "consultation", "before after", "process"],
+    styles: ["luxury", "friendly", "premium"],
+    keywords: ["interior", "interior design", "home styling", "decor", "renovation"],
+    title: "Room Ritual Studio",
+    description: "Soft layered interiors site with before/after reveals, material palette cards and consultation booking.",
+    accent: "#c7a17a",
+    palette: ["#f8f1e8", "#c7a17a", "#4b3628", "#fffaf4"],
+    visualIdentity: "Layered rooms, material swatches, soft parallax and warm tactile consultation flow.",
+    sections: ["hero", "beforeAfter", "portfolio", "packages", "timeline", "booking", "cta"]
+  },
+  {
+    key: "creative-portfolio",
+    label: "Creative Portfolio",
+    niche: "portfolio",
+    features: ["portfolio", "case studies", "contact", "availability", "motion"],
+    styles: ["modern", "dark", "premium"],
+    keywords: ["portfolio", "designer", "creative", "freelance", "case study", "artist"],
+    title: "Mara Vale Studio",
+    description: "Creative portfolio with kinetic case studies, animated availability, and cinematic contact moments.",
+    accent: "#a78bfa",
+    palette: ["#0c0618", "#a78bfa", "#67e8f9", "#f8fafc"],
+    visualIdentity: "Kinetic creative direction, flowing case masks, cursor-reactive highlights and availability ticker.",
+    sections: ["hero", "portfolio", "caseResults", "availability", "testimonials", "contact", "cta"]
+  },
+  {
+    key: "music-artist",
+    label: "Music Artist",
+    niche: "music",
+    features: ["audio", "tour dates", "gallery", "merch", "newsletter"],
+    styles: ["dark", "modern", "premium"],
+    keywords: ["music", "artist", "album", "tour", "band", "dj", "single"],
+    title: "Luna North",
+    description: "Music artist world with audio mock, tour dates, album drop, merch cards and atmospheric motion.",
+    accent: "#fb7185",
+    palette: ["#09040a", "#fb7185", "#7c3aed", "#fdf2f8"],
+    visualIdentity: "Atmospheric album world, waveform motion, tour timeline and cinematic fan conversion.",
+    sections: ["hero", "audio", "timeline", "gallery", "products", "booking", "cta"]
+  },
+  {
+    key: "nightclub-lounge",
+    label: "Nightclub / Lounge",
+    niche: "nightclub",
+    features: ["events", "table booking", "guestlist", "gallery", "lineup"],
+    styles: ["dark", "luxury", "premium"],
+    keywords: ["nightclub", "club", "lounge", "dj", "nightlife", "guestlist", "table"],
+    title: "Nocturne Room",
+    description: "Luxury nightlife site with table booking, glowing event lineup, guestlist and kinetic light systems.",
+    accent: "#c026d3",
+    palette: ["#05020a", "#c026d3", "#22d3ee", "#f5d0fe"],
+    visualIdentity: "Deep club gradients, laser light paths, event cards and floating table reservation UI.",
+    sections: ["hero", "schedule", "artists", "booking", "gallery", "hours", "cta"]
+  },
+  {
+    key: "hotel-resort",
+    label: "Hotel / Resort",
+    niche: "hotel",
+    features: ["room selection", "booking", "concierge", "weather", "gallery", "amenities"],
+    styles: ["luxury", "premium", "modern"],
+    keywords: ["hotel", "resort", "rooms", "suite", "stay", "booking", "concierge"],
+    title: "Aster Bay Resort",
+    description: "Cinematic resort experience with fullscreen destination flow, room booking, concierge and weather UI.",
+    accent: "#7dd3fc",
+    palette: ["#061923", "#7dd3fc", "#f5e6c8", "#ffffff"],
+    visualIdentity: "Fullscreen resort cinema, layered booking, floating weather/time and concierge interactions.",
+    sections: ["hero", "rooms", "weather", "concierge", "booking", "gallery", "cta"]
+  },
+  {
+    key: "travel-agency",
+    label: "Travel Agency",
+    niche: "travel",
+    features: ["destinations", "packages", "booking", "itinerary", "consultation"],
+    styles: ["modern", "premium", "friendly"],
+    keywords: ["travel", "agency", "destination", "vacation", "trip", "itinerary", "tour"],
+    title: "Atlas Drift",
+    description: "Premium travel agency with immersive destination cards, itinerary builder and consultation flow.",
+    accent: "#2dd4bf",
+    palette: ["#061b1f", "#2dd4bf", "#fbbf24", "#ecfeff"],
+    visualIdentity: "Destination portals, moving map lines, itinerary cards and bright adventure glass.",
+    sections: ["hero", "gallery", "packages", "timeline", "booking", "testimonials", "cta"]
+  },
+  {
+    key: "wedding-planner",
+    label: "Wedding Planner",
+    niche: "wedding",
+    features: ["packages", "portfolio", "timeline", "consultation", "testimonials"],
+    styles: ["luxury", "friendly", "premium"],
+    keywords: ["wedding", "planner", "bridal", "event planning", "ceremony", "venue"],
+    title: "Vow & Vale",
+    description: "Romantic wedding planner site with soft timeline, package pathways, portfolio and consultation booking.",
+    accent: "#f9a8d4",
+    palette: ["#fff7fb", "#f9a8d4", "#d6b46a", "#4a2438"],
+    visualIdentity: "Romantic editorial flow, soft reveals, vow timeline and champagne glass consultation panels.",
+    sections: ["hero", "portfolio", "packages", "timeline", "testimonials", "booking", "cta"]
+  },
+  {
+    key: "pet-grooming",
+    label: "Pet Grooming",
+    niche: "pet",
+    features: ["booking", "packages", "pet profiles", "gallery", "reviews"],
+    styles: ["friendly", "modern", "premium"],
+    keywords: ["pet", "grooming", "dog", "cat", "puppy", "pet salon"],
+    title: "Cloud Paw Grooming",
+    description: "Friendly premium pet grooming site with booking, packages, playful gallery and pet profile flow.",
+    accent: "#60a5fa",
+    palette: ["#f0f9ff", "#60a5fa", "#fbbf24", "#0f172a"],
+    visualIdentity: "Playful premium, soft bubbles, pet profile cards and cheerful booking interactions.",
+    sections: ["hero", "packages", "profiles", "booking", "gallery", "testimonials", "cta"]
+  },
+  {
+    key: "gaming-esports",
+    label: "Gaming / Esports",
+    niche: "gaming",
+    features: ["tournaments", "rankings", "teams", "schedule", "shop"],
+    styles: ["dark", "modern", "premium"],
+    keywords: ["gaming", "esports", "tournament", "team", "stream", "rankings", "arena"],
+    title: "Vector Arena",
+    description: "Neon esports platform with glitch motion, tournament bracket, rankings and holographic cards.",
+    accent: "#22c55e",
+    palette: ["#020617", "#22c55e", "#06b6d4", "#a855f7"],
+    visualIdentity: "Glitch transitions, holographic panels, live tournament mock and animated ranking system.",
+    sections: ["hero", "tournament", "rankings", "schedule", "profiles", "products", "cta"]
+  },
+  {
+    key: "creator-brand",
+    label: "Influencer / Creator Brand",
+    niche: "creator",
+    features: ["media kit", "products", "newsletter", "booking", "social proof"],
+    styles: ["modern", "friendly", "premium"],
+    keywords: ["creator", "influencer", "media kit", "brand", "newsletter", "sponsor"],
+    title: "Nia Studio",
+    description: "Creator brand hub with media kit, collaboration flow, product shelf and audience proof.",
+    accent: "#f472b6",
+    palette: ["#13091a", "#f472b6", "#fde68a", "#fff1f2"],
+    visualIdentity: "Creator OS aesthetic, floating social proof, collab cards and brand partnership flow.",
+    sections: ["hero", "stats", "products", "portfolio", "booking", "testimonials", "cta"]
+  },
+  {
+    key: "luxury-watch-store",
+    label: "Luxury Watch Store",
+    niche: "watch",
+    features: ["products", "variants", "wishlist", "appointment", "checkout", "authentication"],
+    styles: ["luxury", "dark", "premium"],
+    keywords: ["watch", "watches", "timepiece", "luxury watch", "rolex", "chrono"],
+    title: "Chronos Reserve",
+    description: "Luxury watch ecommerce with collector-grade product pages, wishlist, authentication and appointment flow.",
+    accent: "#d6b46a",
+    palette: ["#040404", "#d6b46a", "#1f2937", "#f8ead1"],
+    visualIdentity: "Precision horology, macro dial lighting, collector concierge and cinematic product loupe.",
+    sections: ["hero", "products", "wishlist", "concierge", "cart", "checkout", "cta"]
+  },
+  {
+    key: "startup-agency",
+    label: "Startup Agency",
+    niche: "agency",
+    features: ["services", "case studies", "booking", "pricing", "team"],
+    styles: ["modern", "premium", "dark"],
+    keywords: ["startup agency", "agency", "growth", "studio", "product agency", "marketing"],
+    title: "Launchfield",
+    description: "High-conversion startup agency with motion case studies, service pathways and strategy call flow.",
+    accent: "#38bdf8",
+    palette: ["#050816", "#38bdf8", "#8b5cf6", "#f8fafc"],
+    visualIdentity: "Operator-grade agency interface, kinetic proof cards, launch roadmap and strategic CTA rhythm.",
+    sections: ["hero", "services", "caseResults", "pricing", "profiles", "booking", "cta"]
+  },
+  {
+    key: "sports-club",
+    label: "Sports Club",
+    niche: "sports",
+    features: ["schedule", "memberships", "teams", "rankings", "booking"],
+    styles: ["modern", "dark", "premium"],
+    keywords: ["sports club", "team", "club", "league", "training", "match", "membership"],
+    title: "Northside Athletics",
+    description: "Energetic sports club site with teams, fixtures, memberships, rankings and training signup.",
+    accent: "#eab308",
+    palette: ["#07110a", "#eab308", "#22c55e", "#fef9c3"],
+    visualIdentity: "Club energy, scoreboard motion, fixture rails and membership conversion flow.",
+    sections: ["hero", "schedule", "rankings", "profiles", "pricing", "booking", "cta"]
+  },
+  {
+    key: "medical-aesthetic-clinic",
+    label: "Medical Aesthetic Clinic",
+    niche: "aesthetics",
+    features: ["booking", "treatments", "before after", "doctor profiles", "pricing", "trust"],
+    styles: ["premium", "modern", "friendly"],
+    keywords: ["aesthetic", "aesthetics", "med spa", "skin clinic", "botox", "filler", "laser"],
+    title: "Elysian Aesthetics",
+    description: "Clinical-luxury aesthetics clinic with treatment pathways, before/after, doctors and booking.",
+    accent: "#67e8f9",
+    palette: ["#f8fdff", "#67e8f9", "#c4b5fd", "#0f172a"],
+    visualIdentity: "Medical luxury, luminous skin gradients, clinical trust and elegant treatment booking.",
+    sections: ["hero", "trust", "services", "beforeAfter", "profiles", "booking", "faq"]
+  }
+];
+
+const extraBlueprints = additionalBlueprintSpecs.map((spec) =>
+  blueprint({
+    key: spec.key,
+    label: spec.label,
+    niche: spec.niche,
+    supportedFeatures: spec.features,
+    styleTags: spec.styles,
+    pages: [
+      { type: "home", label: "Home", sections: spec.sections.map((kind, index) => section(kind, `${spec.label} ${kind}`, index < 5)) },
+      { type: "portfolio", label: "Experience", sections: [section(spec.sections[0], "Immersive overview"), section(spec.sections[1] ?? "gallery", "Primary interaction"), section("gallery", "Visual story")] },
+      { type: "booking", label: "Booking", sections: [section("booking", "Interactive booking"), section("availability", "Availability"), section("contact", "Contact")] },
+      { type: "pricing", label: "Pricing", sections: [section("pricing", "Plans"), section("faq", "FAQ")] },
+      { type: "contact", label: "Contact", sections: [section("contact", "Contact"), section("map", "Location")] }
+    ],
+    requiredSections: spec.sections.slice(0, 4),
+    optionalSections: spec.sections.slice(4),
+    scoreKeywords: spec.keywords,
+    title: spec.title,
+    description: spec.description,
+    accent: spec.accent,
+    palette: spec.palette,
+    visualIdentity: spec.visualIdentity
+  })
+);
+
+realBlueprints.push(...extraBlueprints);
+
+const generatedExtraContents = Object.fromEntries(
+  additionalBlueprintSpecs.map((spec) => [
+    spec.key,
+    {
+      name: spec.title,
+      headline: headlineFor(spec.key, spec.title),
+      subheadline: spec.description,
+      eyebrow: spec.label,
+      cta: ctaFor(spec.key),
+      secondaryCta: secondaryFor(spec.key),
+      nav: ["Home", "Experience", "Booking", "Pricing", "Contact"],
+      palette: {
+        mode: spec.styles.includes("dark") ? "dark" : "light",
+        accent: spec.accent,
+        secondary: spec.palette[2] ?? spec.accent,
+        surface: spec.palette[0],
+        fontFeel: fontFeelFor(spec.niche)
+      },
+      heroVisual: spec.visualIdentity,
+      suggestedRefinements: ["Make it more cinematic", "Add stronger booking CTA", "Show more visual proof"],
+      missingDetails: ["Brand voice", "Location", "Primary conversion goal"],
+      sections: {
+        services: { title: "Signature experience", items: spec.features.slice(0, 4) },
+        pricing: { title: "Packages", plans: ["Entry", "Signature", "Private"] },
+        gallery: { title: "Visual direction", items: spec.visualIdentity.split(",").slice(0, 4) },
+        portfolio: { title: "Selected work", items: ["Editorial story", "Interactive moment", "Conversion scene"] },
+        booking: { title: ctaFor(spec.key), detail: "A complete local booking flow with availability, contact details and confirmation state." },
+        products: { title: "Product edit", items: ["Hero product", "Limited release", "Collector item"] },
+        lookbook: { title: "Lookbook movement", items: ["Runway", "Editorial", "Campaign"] },
+        rooms: { title: "Room selection", items: ["Garden suite", "Ocean loft", "Private villa"] },
+        tournament: { title: "Live tournament", items: ["Qualifier", "Semi final", "Final"] },
+        rankings: { title: "Ranking system", stats: ["#1 team", "24 matches", "98% energy"] },
+        beforeAfter: { title: "Transformation proof", items: ["Before", "During", "After"] },
+        timeline: { title: "Experience timeline", items: ["Discover", "Book", "Arrive", "Return"] },
+        availability: { title: "Availability", items: ["Today", "Tomorrow", "Weekend"] }
+      }
+    } satisfies BlueprintContent
+  ])
+);
+
 export const blueprintContents: Record<string, BlueprintContent> = {
+  ...generatedExtraContents,
   "restaurant-luxury": {
     name: "Maison Aurelia",
     headline: "A candlelit tasting room for seasonal Nordic fire cooking",
@@ -508,4 +872,56 @@ export const blueprintContents: Record<string, BlueprintContent> = {
 
 export function getBlueprintContent(key: string): BlueprintContent {
   return blueprintContents[key] ?? blueprintContents["ai-saas-launch"];
+}
+
+function headlineFor(key: string, name: string) {
+  const headlines: Record<string, string> = {
+    "modern-barbershop": "Cuts, shaves, and rituals with old-school grit and modern precision",
+    "tattoo-studio": "Ink stories told in black rooms, white light, and living skin",
+    "coffee-shop": "A neighborhood coffee ritual built around slow mornings and good texture",
+    "fashion-brand": "Runway energy, editorial commerce, and a collection that moves",
+    "jewelry-store": "Fine pieces presented with quiet light and collector-grade detail",
+    "architecture-studio": "Buildings, voids, and light composed with radical restraint",
+    "interior-design-agency": "Rooms that feel lived-in, layered, and quietly cinematic",
+    "creative-portfolio": "Selected work moving through case studies, texture, and proof",
+    "music-artist": "A living album world for releases, tour dates, and fan moments",
+    "nightclub-lounge": "A velvet-dark room for late nights, tables, lineups, and light",
+    "hotel-resort": "An immersive stay where rooms, weather, and concierge live together",
+    "travel-agency": "Trips shaped like cinematic routes, not static destination cards",
+    "wedding-planner": "Wedding planning with soft choreography, timelines, and trust",
+    "pet-grooming": "A playful premium grooming flow for pets and their people",
+    "gaming-esports": "A live arena interface for teams, tournaments, and rankings",
+    "creator-brand": "A creator operating system for audience, commerce, and collaborations",
+    "luxury-watch-store": "Collector-grade timepieces with precision, provenance, and concierge",
+    "startup-agency": "A launch system for startups that need strategy, proof, and speed",
+    "sports-club": "A club platform for fixtures, members, rankings, and training energy",
+    "medical-aesthetic-clinic": "Clinical-luxury treatments with luminous trust and booking clarity"
+  };
+  return headlines[key] ?? `${name} built as a cinematic interactive experience`;
+}
+
+function ctaFor(key: string) {
+  if (key.includes("store") || key.includes("fashion") || key.includes("jewelry") || key.includes("watch")) return "Shop collection";
+  if (key.includes("hotel")) return "Book stay";
+  if (key.includes("gaming")) return "Join tournament";
+  if (key.includes("music")) return "Listen now";
+  if (key.includes("travel")) return "Plan trip";
+  return "Book now";
+}
+
+function secondaryFor(key: string) {
+  if (key.includes("fashion")) return "View lookbook";
+  if (key.includes("architecture") || key.includes("portfolio")) return "View work";
+  if (key.includes("hotel") || key.includes("travel")) return "Explore experience";
+  if (key.includes("gaming")) return "View rankings";
+  return "Explore";
+}
+
+function fontFeelFor(niche: Niche): BlueprintContent["palette"]["fontFeel"] {
+  if (["architecture", "fashion", "jewelry", "watch"].includes(niche)) return "luxury";
+  if (["gaming", "music", "creator", "portfolio"].includes(niche)) return "creative";
+  if (["barbershop", "tattoo", "sports"].includes(niche)) return "bold";
+  if (["hotel", "travel", "wedding", "interior"].includes(niche)) return "editorial";
+  if (["aesthetics", "pet", "coffee"].includes(niche)) return "soft";
+  return "tech";
 }

@@ -42,7 +42,21 @@ function newSection(kind: SectionKind, order: number): SectionNode {
     courses: "Courses",
     progress: "Progress",
     instructors: "Instructors",
-    map: "Map"
+    map: "Map",
+    lookbook: "Lookbook",
+    products: "Products",
+    cart: "Cart",
+    checkout: "Checkout",
+    rooms: "Rooms",
+    weather: "Weather",
+    artists: "Artists",
+    audio: "Audio",
+    tournament: "Tournament",
+    rankings: "Rankings",
+    timeline: "Timeline",
+    availability: "Availability",
+    wishlist: "Wishlist",
+    concierge: "Concierge"
   };
 
   return {

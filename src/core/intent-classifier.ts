@@ -11,6 +11,26 @@ const nicheRules: Array<{ niche: Niche; words: string[]; businessType: string }>
   { niche: "law", words: ["lawyer", "law", "legal", "attorney", "consultation", "firm", "case"], businessType: "Law firm" },
   { niche: "photography", words: ["photographer", "event photos", "wedding", "gallery", "portfolio", "photo", "client galleries"], businessType: "Event photographer" },
   { niche: "education", words: ["course", "academy", "school", "education", "learning", "students", "online course", "instructor"], businessType: "Online course platform" },
+  { niche: "barbershop", words: ["barber", "barbershop", "haircut", "shave", "beard", "fade", "grooming"], businessType: "Modern barbershop" },
+  { niche: "tattoo", words: ["tattoo", "ink", "artist", "piercing", "flash"], businessType: "Tattoo studio" },
+  { niche: "coffee", words: ["coffee", "cafe", "espresso", "roastery", "bakery", "latte"], businessType: "Coffee shop" },
+  { niche: "fashion", words: ["fashion", "clothing", "runway", "lookbook", "apparel", "collection"], businessType: "Fashion brand" },
+  { niche: "jewelry", words: ["jewelry", "jewellery", "rings", "diamonds", "necklace", "bracelet", "engagement"], businessType: "Jewelry store" },
+  { niche: "architecture", words: ["architecture", "architect", "studio", "buildings", "urban"], businessType: "Architecture studio" },
+  { niche: "interior", words: ["interior", "interior design", "home styling", "decor", "renovation"], businessType: "Interior design agency" },
+  { niche: "portfolio", words: ["portfolio", "designer", "creative", "freelance", "case study"], businessType: "Creative portfolio" },
+  { niche: "music", words: ["music", "artist", "album", "tour", "band", "dj", "single"], businessType: "Music artist" },
+  { niche: "nightclub", words: ["nightclub", "club", "lounge", "nightlife", "guestlist", "table"], businessType: "Nightclub and lounge" },
+  { niche: "hotel", words: ["hotel", "resort", "rooms", "suite", "stay", "concierge"], businessType: "Hotel or resort" },
+  { niche: "travel", words: ["travel", "agency", "destination", "vacation", "trip", "itinerary", "tour"], businessType: "Travel agency" },
+  { niche: "wedding", words: ["wedding", "planner", "bridal", "event planning", "ceremony", "venue"], businessType: "Wedding planner" },
+  { niche: "pet", words: ["pet", "grooming", "dog", "cat", "puppy", "pet salon"], businessType: "Pet grooming studio" },
+  { niche: "gaming", words: ["gaming", "esports", "tournament", "team", "stream", "rankings", "arena"], businessType: "Gaming and esports brand" },
+  { niche: "creator", words: ["creator", "influencer", "media kit", "brand", "newsletter", "sponsor"], businessType: "Creator brand" },
+  { niche: "watch", words: ["watch", "watches", "timepiece", "luxury watch", "chrono"], businessType: "Luxury watch store" },
+  { niche: "agency", words: ["startup agency", "growth agency", "product agency", "marketing agency", "launch studio"], businessType: "Startup agency" },
+  { niche: "sports", words: ["sports club", "league", "training", "match", "athletics"], businessType: "Sports club" },
+  { niche: "aesthetics", words: ["aesthetic", "aesthetics", "med spa", "skin clinic", "botox", "filler", "laser"], businessType: "Medical aesthetic clinic" },
   { niche: "consultant", words: ["consultant", "agency", "advisor", "coach", "strategy", "expert"], businessType: "Consulting practice" }
 ];
 
@@ -26,6 +46,10 @@ const featureRules = [
   { feature: "courses", words: ["courses", "students", "lessons"] },
   { feature: "listings", words: ["listings", "properties", "homes"] },
   { feature: "dashboard", words: ["dashboard", "docs", "product ui"] }
+  ,{ feature: "products", words: ["shop", "store", "cart", "checkout", "wishlist", "products", "ecommerce"] }
+  ,{ feature: "portfolio", words: ["portfolio", "case study", "work", "gallery"] }
+  ,{ feature: "rooms", words: ["rooms", "suite", "hotel", "stay"] }
+  ,{ feature: "tournament", words: ["tournament", "rankings", "esports"] }
 ];
 
 const styleRules: Array<{ style: StyleToken; words: string[] }> = [

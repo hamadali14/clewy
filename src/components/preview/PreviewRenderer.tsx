@@ -376,7 +376,22 @@ function renderSection(section: SectionNode, schema: ProjectSchema) {
     case "hours":
     case "story":
     case "map":
+    case "lookbook":
+    case "products":
+    case "rooms":
+    case "weather":
+    case "artists":
+    case "audio":
+    case "tournament":
+    case "rankings":
+    case "timeline":
+    case "availability":
+    case "wishlist":
+    case "concierge":
       return <InteractiveList section={section} schema={schema} />;
+    case "cart":
+    case "checkout":
+      return <FormSection section={section} schema={schema} />;
     case "beforeAfter":
     case "transformations":
       return <VisualProof section={section} schema={schema} />;

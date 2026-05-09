@@ -10,6 +10,11 @@ function scoreBlueprint(intent: UserIntent, blueprint: BlueprintDefinition) {
     reasons.push(`Industry match: ${blueprint.niche}`);
   }
 
+  if (intent.rawPrompt.toLowerCase().includes(blueprint.key.toLowerCase())) {
+    score += 90;
+    reasons.push("Explicit blueprint key requested");
+  }
+
   const keywordHits = blueprint.scoreKeywords.filter((word) => intent.rawPrompt.toLowerCase().includes(word)).length;
   if (keywordHits) {
     score += keywordHits * 8;
