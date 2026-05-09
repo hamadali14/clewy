@@ -18,7 +18,31 @@ function newSection(kind: SectionKind, order: number): SectionNode {
     booking: "Booking",
     gallery: "Gallery",
     stats: "Stats",
-    cta: "CTA"
+    cta: "CTA",
+    menu: "Menu",
+    hours: "Hours",
+    story: "Story",
+    team: "Team",
+    trust: "Trust",
+    dashboard: "Dashboard",
+    tabs: "Feature tabs",
+    schedule: "Schedule",
+    profiles: "Profiles",
+    transformations: "Transformations",
+    listings: "Listings",
+    filters: "Filters",
+    valuation: "Valuation",
+    packages: "Packages",
+    beforeAfter: "Before / after",
+    vehicleSelector: "Vehicle selector",
+    caseResults: "Case results",
+    badges: "Badges",
+    portfolio: "Portfolio",
+    proofing: "Proofing",
+    courses: "Courses",
+    progress: "Progress",
+    instructors: "Instructors",
+    map: "Map"
   };
 
   return {
@@ -69,6 +93,16 @@ export function refineProject(command: string, schema: ProjectSchema): { schema:
     explanation = "Reduced visual density and moved the theme toward a minimal light system.";
   }
 
+  if (text.includes("brighter") || text.includes("bright")) {
+    next = updateTheme(next, { mode: "light", accent: schema.theme.accent });
+    explanation = "Brightened the visual system while keeping the blueprint structure intact.";
+  }
+
+  if (text.includes("modern")) {
+    next = updateTheme(next, { style: "modern", accent: "#60a5fa" });
+    explanation = "Shifted the blueprint toward a cleaner modern visual system.";
+  }
+
   if (text.includes("dark")) {
     next = updateTheme(next, { mode: "dark", style: "dark", accent: styleAccents.dark });
     explanation = "Enabled dark premium mode across the preview.";
@@ -89,9 +123,9 @@ export function refineProject(command: string, schema: ProjectSchema): { schema:
     explanation = `Changed the accent color to ${colorMatch[1]}.`;
   }
 
-  if (text.includes("add testimonials")) {
+  if (text.includes("add testimonials") || text.includes("add reviews") || text.includes("reviews")) {
     next = ensureSection(next, "testimonials");
-    explanation = "Added a testimonials section to strengthen social proof.";
+    explanation = "Added reviews/testimonials to strengthen social proof.";
   }
   if (text.includes("remove testimonials")) {
     next = removeByKind(next, "testimonials");
@@ -108,6 +142,25 @@ export function refineProject(command: string, schema: ProjectSchema): { schema:
   if (text.includes("add faq")) {
     next = ensureSection(next, "faq");
     explanation = "Added an FAQ section for objection handling.";
+  }
+
+  if (text.includes("add booking") || text.includes("booking")) {
+    next = ensureSection(next, "booking");
+    explanation = "Added a booking section with an interactive form mock.";
+  }
+
+  if (text.includes("show more photos") || text.includes("more photos")) {
+    next = ensureSection(next, schema.niche === "photography" ? "portfolio" : "gallery");
+    explanation = "Added a richer visual gallery section.";
+  }
+
+  if (text.includes("stronger") || text.includes("cta")) {
+    const page = firstPage(next);
+    const hero = page.sections.find((section) => section.kind === "hero");
+    const cta = page.sections.find((section) => section.kind === "cta");
+    if (hero) next = updateSection(next, page.id, hero.id, { data: { ...hero.data, cta: "Book a premium consultation" } });
+    if (cta) next = updateSection(next, page.id, cta.id, { data: { ...cta.data, title: "Ready for the premium version?", cta: "Start now" } });
+    explanation = "Strengthened the primary calls to action.";
   }
 
   if (text.includes("hero shorter") || text.includes("shorter hero")) {

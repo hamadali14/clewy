@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import { ArrowUpRight, Calendar, Check, MapPin, MessageSquare, Shield, Sparkles, Star, Zap } from "lucide-react";
 import type { ProjectSchema, SectionNode } from "@/core/types";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,23 @@ function tone(schema: ProjectSchema) {
   };
 }
 
+function blueprintSkin(schema: ProjectSchema) {
+  const key = schema.blueprintKey;
+  const skins: Record<string, string> = {
+    "restaurant-luxury": "bg-[radial-gradient(ellipse_at_75%_10%,rgba(214,180,106,.18),transparent_30rem),linear-gradient(135deg,#050403,#160d08)]",
+    "dental-clinic-premium": "bg-[radial-gradient(ellipse_at_20%_5%,rgba(94,234,212,.24),transparent_32rem),linear-gradient(135deg,#f0fdff,#eaf7ff)]",
+    "ai-saas-launch": "bg-[radial-gradient(ellipse_at_72%_10%,rgba(139,92,246,.25),transparent_34rem),linear-gradient(135deg,#050816,#0b1024)]",
+    "gym-fitness-energy": "bg-[radial-gradient(ellipse_at_70%_10%,rgba(249,115,22,.24),transparent_34rem),linear-gradient(135deg,#030303,#120707)]",
+    "real-estate-premium": "bg-[radial-gradient(ellipse_at_20%_8%,rgba(197,164,109,.22),transparent_34rem),linear-gradient(135deg,#f3eadb,#fffaf2)]",
+    "beauty-spa-glow": "bg-[radial-gradient(ellipse_at_75%_8%,rgba(240,166,193,.24),transparent_32rem),linear-gradient(135deg,#fff7fb,#fffdf7)]",
+    "auto-detailing-pro": "bg-[radial-gradient(ellipse_at_80%_10%,rgba(56,189,248,.22),transparent_34rem),linear-gradient(135deg,#020617,#0f172a)]",
+    "law-firm-authority": "bg-[radial-gradient(ellipse_at_70%_10%,rgba(214,180,106,.18),transparent_34rem),linear-gradient(135deg,#071426,#050b14)]",
+    "event-photographer-gallery": "bg-[radial-gradient(ellipse_at_70%_10%,rgba(245,158,11,.2),transparent_34rem),linear-gradient(135deg,#030303,#130d08)]",
+    "course-academy-modern": "bg-[radial-gradient(ellipse_at_75%_10%,rgba(96,165,250,.24),transparent_32rem),linear-gradient(135deg,#f8fbff,#eef6ff)]"
+  };
+  return skins[key] ?? "";
+}
+
 function PreviewButton({ children, accent }: { children: string; accent: string }) {
   return (
     <button
@@ -38,7 +56,7 @@ function PreviewButton({ children, accent }: { children: string; accent: string 
   );
 }
 
-function Nav({ schema }: { schema: ProjectSchema }) {
+function Nav({ schema, activePageId, onPageChange }: { schema: ProjectSchema; activePageId: string; onPageChange: (id: string) => void }) {
   const t = tone(schema);
   return (
     <div className={cn("sticky top-3 z-30 mx-3 mb-5 flex items-center justify-between rounded-full border px-4 py-3 backdrop-blur-2xl", t.light ? "border-white/80 bg-white/70 shadow-[0_18px_50px_rgba(80,100,130,0.12)]" : "border-white/12 bg-slate-950/58")}>
@@ -51,11 +69,16 @@ function Nav({ schema }: { schema: ProjectSchema }) {
           <p className={cn("text-[11px]", t.muted)}>{schema.intent.businessType}</p>
         </div>
       </div>
-      <div className={cn("hidden gap-5 text-xs font-medium md:flex", t.muted)}>
-        <span>Blueprint</span>
-        <span>Services</span>
-        <span>Proof</span>
-        <span>Contact</span>
+      <div className={cn("hidden gap-2 text-xs font-medium md:flex", t.muted)}>
+        {schema.pages.map((page) => (
+          <button
+            key={page.id}
+            onClick={() => onPageChange(page.id)}
+            className={cn("rounded-full px-3 py-1.5 transition hover:bg-white/12", activePageId === page.id && (t.light ? "bg-slate-950 text-white" : "bg-white text-slate-950"))}
+          >
+            {page.title}
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -140,14 +163,20 @@ function FeatureBand({ section, schema }: { section: SectionNode; schema: Projec
 
 function Pricing({ section, schema }: { section: SectionNode; schema: ProjectSchema }) {
   const t = tone(schema);
+  const [yearly, setYearly] = useState(false);
   return (
     <div className="py-10">
-      <h2 className={cn("text-3xl font-semibold", t.heading)}>{text(section.data.title, "Simple packages")}</h2>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h2 className={cn("text-3xl font-semibold", t.heading)}>{text(section.data.title, "Simple packages")}</h2>
+        <button onClick={() => setYearly(!yearly)} className={cn("rounded-full border px-4 py-2 text-xs font-semibold", t.light ? "border-slate-200 bg-white text-slate-700" : "border-white/12 bg-white/8 text-white/66")}>
+          {yearly ? "Yearly billing" : "Monthly billing"}
+        </button>
+      </div>
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {list(section.data.plans, ["Essential", "Growth", "Premier"]).map((plan, index) => (
           <div key={plan} className={cn("rounded-[2rem] border p-5", t.soft, index === 1 && "scale-[1.02]")} style={index === 1 ? { boxShadow: `0 24px 70px ${schema.theme.accent}22` } : undefined}>
             <p className={cn("text-sm", t.muted)}>{plan}</p>
-            <p className={cn("mt-3 text-4xl font-semibold", t.heading)}>${[49, 99, 179][index]}</p>
+            <p className={cn("mt-3 text-4xl font-semibold", t.heading)}>${yearly ? [490, 990, 1790][index] : [49, 99, 179][index]}</p>
             <p className={cn("mt-3 text-sm leading-6", t.muted)}>Structured plan content that can be hidden, edited, or expanded without changing renderer code.</p>
             <div className="mt-5"><PreviewButton accent={schema.theme.accent}>Choose plan</PreviewButton></div>
           </div>
@@ -204,6 +233,103 @@ function SimpleSection({ section, schema }: { section: SectionNode; schema: Proj
   );
 }
 
+function InteractiveList({ section, schema }: { section: SectionNode; schema: ProjectSchema }) {
+  const t = tone(schema);
+  const [active, setActive] = useState(0);
+  const items = list(section.data.items ?? section.data.categories ?? section.data.people, ["Signature", "Premium", "Concierge"]);
+  return (
+    <div className="py-10">
+      <div className={cn("rounded-[2.4rem] border p-6", t.soft)}>
+        <h2 className={cn("text-3xl font-semibold", t.heading)}>{text(section.data.title, section.label)}</h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-[.7fr_1.3fr]">
+          <div className="grid gap-2">
+            {items.map((item, index) => (
+              <button key={item} onClick={() => setActive(index)} className={cn("rounded-2xl px-4 py-3 text-left text-sm transition", active === index ? "text-slate-950" : t.light ? "bg-white text-slate-600" : "bg-white/8 text-white/58")} style={active === index ? { background: schema.theme.accent } : undefined}>
+                {item}
+              </button>
+            ))}
+          </div>
+          <div className={cn("min-h-56 rounded-[2rem] border p-6", t.light ? "border-slate-200 bg-white/72" : "border-white/10 bg-slate-950/28")}>
+            <p className={cn("text-sm", t.muted)}>Selected</p>
+            <p className={cn("mt-3 text-4xl font-semibold", t.heading)}>{items[active]}</p>
+            <p className={cn("mt-4 max-w-xl text-sm leading-6", t.muted)}>Interactive blueprint content with hover and selection states, ready for real data or future API-backed enrichment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FormSection({ section, schema }: { section: SectionNode; schema: ProjectSchema }) {
+  const t = tone(schema);
+  return (
+    <div className="py-10">
+      <div className={cn("grid gap-6 rounded-[2.4rem] border p-6 lg:grid-cols-[.9fr_1.1fr]", t.soft)}>
+        <div>
+          <h2 className={cn("text-3xl font-semibold", t.heading)}>{text(section.data.title, "Book now")}</h2>
+          <p className={cn("mt-3 text-sm leading-6", t.muted)}>{text(section.data.detail, "A conversion-ready interactive form mock.")}</p>
+        </div>
+        <div className="grid gap-3">
+          {list(section.data.fields, ["Name", "Email", "Preferred date"]).map((field) => (
+            <input key={field} aria-label={field} placeholder={field} className={cn("rounded-2xl border px-4 py-3 text-sm outline-none", t.light ? "border-slate-200 bg-white text-slate-950 placeholder:text-slate-400" : "border-white/10 bg-white/8 text-white placeholder:text-white/34")} />
+          ))}
+          <PreviewButton accent={schema.theme.accent}>{text(section.data.cta, "Submit request")}</PreviewButton>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function VisualProof({ section, schema }: { section: SectionNode; schema: ProjectSchema }) {
+  const t = tone(schema);
+  const [after, setAfter] = useState(true);
+  return (
+    <div className="py-10">
+      <div className={cn("overflow-hidden rounded-[2.4rem] border p-6", t.soft)}>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className={cn("text-3xl font-semibold", t.heading)}>{text(section.data.title, section.label)}</h2>
+          <button onClick={() => setAfter(!after)} className="rounded-full px-4 py-2 text-xs font-semibold text-slate-950" style={{ background: schema.theme.accent }}>
+            {after ? "After" : "Before"}
+          </button>
+        </div>
+        <div className={cn("mt-6 h-72 rounded-[2rem] transition", after ? "scale-100 opacity-100" : "scale-[.98] opacity-70")} style={{ background: `radial-gradient(ellipse at 70% 20%, ${schema.theme.accent}66, transparent 45%), linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,.04))` }} />
+      </div>
+    </div>
+  );
+}
+
+function DashboardSection({ section, schema }: { section: SectionNode; schema: ProjectSchema }) {
+  const t = tone(schema);
+  return (
+    <div className="py-10">
+      <div className={cn("rounded-[2.4rem] border p-5", t.soft)}>
+        <h2 className={cn("text-3xl font-semibold", t.heading)}>{text(section.data.title, "Live dashboard")}</h2>
+        <div className="mt-6 grid gap-4 lg:grid-cols-[1.3fr_.7fr]">
+          <div className={cn("rounded-[2rem] border p-4", t.light ? "border-slate-200 bg-white/72" : "border-white/10 bg-slate-950/36")}>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {list(section.data.metrics ?? section.data.stats, ["Realtime", "Automated", "Ready"]).map((metric) => (
+                <div key={metric} className={cn("rounded-2xl p-4", t.light ? "bg-slate-100" : "bg-white/8")}>
+                  <p className={cn("text-sm font-semibold", t.heading)}>{metric}</p>
+                  <div className="mt-8 h-2 rounded-full" style={{ background: `linear-gradient(90deg, ${schema.theme.accent}, transparent)` }} />
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 h-44 rounded-[1.5rem]" style={{ background: `linear-gradient(135deg, ${schema.theme.accent}33, rgba(255,255,255,.06))` }} />
+          </div>
+          <div className="grid gap-3">
+            {["Sync", "Score", "Deploy"].map((item) => (
+              <div key={item} className={cn("rounded-2xl border p-4", t.light ? "border-slate-200 bg-white/70" : "border-white/10 bg-white/8")}>
+                <p className={cn("text-sm font-semibold", t.heading)}>{item}</p>
+                <p className={cn("mt-2 text-xs", t.muted)}>Interactive product state</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CTA({ section, schema }: { section: SectionNode; schema: ProjectSchema }) {
   const t = tone(schema);
   return (
@@ -227,6 +353,35 @@ function renderSection(section: SectionNode, schema: ProjectSchema) {
       return <FeatureBand section={section} schema={schema} />;
     case "pricing":
       return <Pricing section={section} schema={schema} />;
+    case "booking":
+    case "contact":
+    case "valuation":
+      return <FormSection section={section} schema={schema} />;
+    case "menu":
+    case "tabs":
+    case "schedule":
+    case "profiles":
+    case "team":
+    case "listings":
+    case "filters":
+    case "packages":
+    case "vehicleSelector":
+    case "caseResults":
+    case "badges":
+    case "portfolio":
+    case "proofing":
+    case "courses":
+    case "progress":
+    case "instructors":
+    case "hours":
+    case "story":
+    case "map":
+      return <InteractiveList section={section} schema={schema} />;
+    case "beforeAfter":
+    case "transformations":
+      return <VisualProof section={section} schema={schema} />;
+    case "dashboard":
+      return <DashboardSection section={section} schema={schema} />;
     case "testimonials":
       return <Testimonials section={section} schema={schema} />;
     case "cta":
@@ -237,14 +392,15 @@ function renderSection(section: SectionNode, schema: ProjectSchema) {
 }
 
 export function PreviewRenderer({ schema, className }: { schema: ProjectSchema; className?: string }) {
-  const page = schema.pages[0];
+  const [activePageId, setActivePageId] = useState(schema.pages[0]?.id ?? "page-home");
+  const page = schema.pages.find((candidate) => candidate.id === activePageId) ?? schema.pages[0];
   const t = tone(schema);
 
   return (
-    <div className={cn("relative min-h-full transition", t.page, className)} style={{ ["--accent" as string]: schema.theme.accent }}>
+    <div className={cn("relative min-h-full transition", t.page, blueprintSkin(schema), className)} style={{ ["--accent" as string]: schema.theme.accent }}>
       <div className={cn("absolute inset-0", t.light ? "preview-grid opacity-80" : "bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:34px_34px] opacity-35")} />
       <div className="relative mx-auto max-w-6xl px-3 py-4 sm:px-6">
-        <Nav schema={schema} />
+        <Nav schema={schema} activePageId={page.id} onPageChange={setActivePageId} />
         <AnimatePresence mode="popLayout">
           {page.sections
             .filter((section) => section.visible)

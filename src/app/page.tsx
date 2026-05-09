@@ -177,7 +177,7 @@ export default function HomePage() {
       <section className="relative mx-auto max-w-7xl px-4 py-24">
         <div className="mb-10">
           <p className="text-sm font-semibold text-cyan-200">Blueprint marketplace preview</p>
-          <h2 className="mt-3 text-balance text-5xl font-semibold text-white">Six niches, six different visual systems.</h2>
+          <h2 className="mt-3 text-balance text-5xl font-semibold text-white">Ten industries, ten distinct visual systems.</h2>
         </div>
         <DemoGallery />
       </section>

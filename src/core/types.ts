@@ -4,10 +4,48 @@ export type Niche =
   | "saas"
   | "gym"
   | "real-estate"
+  | "beauty"
+  | "auto"
+  | "law"
+  | "photography"
+  | "education"
   | "consultant"
   | "general";
 
-export type PageType = "landing" | "services" | "pricing" | "booking" | "contact" | "about";
+export type PageType =
+  | "landing"
+  | "home"
+  | "menu"
+  | "reservations"
+  | "gallery"
+  | "about"
+  | "contact"
+  | "services"
+  | "pricing"
+  | "booking"
+  | "team"
+  | "features"
+  | "docs"
+  | "testimonials"
+  | "classes"
+  | "trainers"
+  | "memberships"
+  | "schedule"
+  | "listings"
+  | "property-detail"
+  | "agents"
+  | "valuation"
+  | "packages"
+  | "results"
+  | "practice-areas"
+  | "attorneys"
+  | "case-results"
+  | "consultation"
+  | "portfolio"
+  | "client-galleries"
+  | "courses"
+  | "course-detail"
+  | "student-dashboard";
 
 export type StyleToken = "minimal" | "modern" | "luxury" | "premium" | "dark" | "friendly";
 
@@ -22,7 +60,31 @@ export type SectionKind =
   | "booking"
   | "gallery"
   | "stats"
-  | "cta";
+  | "cta"
+  | "menu"
+  | "hours"
+  | "story"
+  | "team"
+  | "trust"
+  | "dashboard"
+  | "tabs"
+  | "schedule"
+  | "profiles"
+  | "transformations"
+  | "listings"
+  | "filters"
+  | "valuation"
+  | "packages"
+  | "beforeAfter"
+  | "vehicleSelector"
+  | "caseResults"
+  | "badges"
+  | "portfolio"
+  | "proofing"
+  | "courses"
+  | "progress"
+  | "instructors"
+  | "map";
 
 export type DeviceMode = "desktop" | "tablet" | "mobile";
 
@@ -65,6 +127,9 @@ export interface BlueprintDefinition {
     title: string;
     description: string;
     accent: string;
+    palette?: string[];
+    complexity?: "focused" | "multi-page" | "advanced";
+    visualIdentity?: string;
   };
 }
 
@@ -72,6 +137,9 @@ export interface ThemeSettings {
   mode: "light" | "dark";
   style: StyleToken;
   accent: string;
+  secondary?: string;
+  surface?: string;
+  fontFeel?: "editorial" | "clinical" | "tech" | "bold" | "luxury" | "soft" | "authority" | "creative" | "learning";
   radius: "soft" | "round" | "pill";
   density: "compact" | "balanced" | "spacious";
 }
@@ -104,6 +172,11 @@ export interface ProjectSchema {
   pages: PageSchema[];
   createdAt: string;
   updatedAt: string;
+  metadata?: {
+    visualIdentity?: string;
+    suggestedRefinements?: string[];
+    missingDetails?: string[];
+  };
 }
 
 export interface ValidationIssue {
@@ -129,5 +202,7 @@ export interface MatchResult {
   bestBlueprint: BlueprintDefinition;
   score: number;
   reasons: string[];
+  missingDetails: string[];
+  suggestedRefinements: string[];
   alternatives: Array<{ blueprint: BlueprintDefinition; score: number; reasons: string[] }>;
 }

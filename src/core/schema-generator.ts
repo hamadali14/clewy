@@ -1,108 +1,98 @@
+import { getBlueprintContent } from "@/blueprints";
 import { defaultTheme, styleAccents } from "./blueprint-contracts";
 import type { BlueprintDefinition, ProjectSchema, SectionKind, UserIntent } from "./types";
 
-const copyByNiche = {
-  dental: {
-    name: "Aurelia Dental Studio",
-    heroTitle: "Premium dental care shaped around calm, confident visits",
-    subtitle: "Modern treatment plans, transparent pricing, and same-week appointments in a refined clinic experience.",
-    cta: "Book an appointment"
-  },
-  restaurant: {
-    name: "Noma Vale Kitchen",
-    heroTitle: "Seasonal dining with atmosphere from the first glance",
-    subtitle: "A modern restaurant site for reservations, menus, signature dishes, and warm local discovery.",
-    cta: "Reserve a table"
-  },
-  saas: {
-    name: "Vectorlane",
-    heroTitle: "Launch a sharper product story in minutes",
-    subtitle: "A structured SaaS landing page with proof, pricing, features, and conversion-ready calls to action.",
-    cta: "Start free"
-  },
-  gym: {
-    name: "Pulse Form Studio",
-    heroTitle: "Training programs that feel personal from day one",
-    subtitle: "Showcase classes, memberships, coaches, and trial sessions with a high-energy premium web presence.",
-    cta: "Book a trial"
-  },
-  "real-estate": {
-    name: "Northline Estates",
-    heroTitle: "Curated homes, confident moves, and market clarity",
-    subtitle: "A luxury real estate showcase for listings, agent trust, viewing requests, and neighborhood insight.",
-    cta: "Schedule a viewing"
-  },
-  consultant: {
-    name: "Arden Strategy",
-    heroTitle: "Sharper strategy for teams ready to move with focus",
-    subtitle: "A refined consulting presence built for authority, offers, outcomes, and qualified calls.",
-    cta: "Book a strategy call"
-  },
-  general: {
-    name: "Blueprint Studio",
-    heroTitle: "A polished web presence generated from a reliable blueprint",
-    subtitle: "Structured sections, consistent design, and deterministic refinement for your next launch.",
-    cta: "Start building"
-  }
-};
+function fallbackSection(kind: SectionKind) {
+  return {
+    title: kind.replace(/([A-Z])/g, " $1").replace(/^./, (value) => value.toUpperCase()),
+    items: ["Premium layout", "Interactive state", "Conversion-ready content"]
+  };
+}
 
-const sectionContent = (kind: SectionKind, niche: keyof typeof copyByNiche) => {
-  const copy = copyByNiche[niche];
-  const commonItems = {
-    dental: ["Cosmetic dentistry", "Preventive care", "Implants"],
-    restaurant: ["Chef tasting menu", "Private dining", "Weekend brunch"],
-    saas: ["Automated workflows", "Realtime analytics", "Team permissions"],
-    gym: ["Strength training", "Mobility classes", "Personal coaching"],
-    "real-estate": ["Luxury listings", "Buyer advisory", "Market valuation"],
-    consultant: ["Growth strategy", "Operating cadence", "Executive advisory"],
-    general: ["Discovery", "Design system", "Launch support"]
-  }[niche];
+function sectionContent(kind: SectionKind, blueprint: BlueprintDefinition) {
+  const content = getBlueprintContent(blueprint.key);
+  const specific = content.sections[kind] ?? {};
+  const shared: Partial<Record<SectionKind, Record<string, unknown>>> = {
+    hero: {
+      title: content.headline,
+      subtitle: content.subheadline,
+      eyebrow: content.eyebrow,
+      cta: content.cta,
+      secondaryCta: content.secondaryCta,
+      visual: content.heroVisual,
+      compact: false
+    },
+    cta: {
+      title: `Ready to build with ${content.name}?`,
+      cta: content.cta,
+      secondaryCta: content.secondaryCta
+    },
+    booking: {
+      title: "Book a preferred time",
+      detail: "Interactive booking mock with service, date, contact details, and conversion-ready CTA.",
+      fields: ["Name", "Email", "Preferred date", "Service"]
+    },
+    contact: {
+      title: "Start the conversation",
+      detail: "Contact form, response expectation, address, and operational notes.",
+      fields: ["Name", "Email", "Message"]
+    },
+    pricing: {
+      title: "Packages and pricing",
+      plans: ["Essential", "Signature", "Premier"]
+    },
+    testimonials: {
+      title: "What clients say",
+      quotes: ["The experience felt premium from the first touch.", "Clear, beautiful, and easy to act on."]
+    },
+    faq: {
+      title: "Questions, answered",
+      items: ["How do bookings work?", "Can the content be refined?", "Is this mobile responsive?"]
+    },
+    stats: {
+      title: "Proof in motion",
+      stats: ["94% match score", "6 page system", "Live preview"]
+    },
+    gallery: {
+      title: "Selected visuals",
+      items: ["Hero moment", "Detail image", "Editorial scene", "Conversion panel"]
+    },
+    services: {
+      title: "Signature services",
+      items: ["Discovery", "Premium delivery", "Ongoing refinement"]
+    },
+    features: {
+      title: "Built for conversion",
+      items: ["Fast scanning", "Trust signals", "Clear next step"]
+    }
+  } satisfies Partial<Record<SectionKind, Record<string, unknown>>>;
 
-  switch (kind) {
-    case "hero":
-      return { title: copy.heroTitle, subtitle: copy.subtitle, cta: copy.cta, eyebrow: copy.name, compact: false };
-    case "services":
-    case "features":
-      return { title: kind === "services" ? "Signature services" : "Built for conversion", items: commonItems };
-    case "pricing":
-      return { title: "Simple packages", plans: ["Essential", "Growth", "Premier"] };
-    case "testimonials":
-      return { title: "Trusted by exacting clients", quotes: ["The experience felt polished from the first interaction.", "Everything was clear, fast, and beautifully presented."] };
-    case "faq":
-      return { title: "Questions, answered", items: ["How fast can we launch?", "Can we refine the content?", "Is the design responsive?"] };
-    case "contact":
-      return { title: "Start the conversation", detail: "Open weekdays with flexible consultation slots." };
-    case "booking":
-      return { title: "Reserve your preferred time", detail: "Choose a slot and receive a clear deterministic confirmation flow." };
-    case "gallery":
-      return { title: "Selected highlights", items: commonItems };
-    case "stats":
-      return { title: "Proof in motion", stats: ["42% lift", "7 day launch", "98% clarity"] };
-    case "cta":
-      return { title: "Ready to see the first version?", cta: copy.cta };
-    default:
-      return {};
-  }
-};
+  return {
+    ...(shared[kind] ?? fallbackSection(kind)),
+    ...specific
+  };
+}
 
 export function generateProjectSchema(intent: UserIntent, blueprint: BlueprintDefinition): ProjectSchema {
-  const niche = intent.niche === "general" ? blueprint.niche : intent.niche;
-  const copy = copyByNiche[niche];
-  const primaryStyle = intent.style[0] ?? blueprint.styleTags[0] ?? "premium";
-  const accent = blueprint.preview.accent || styleAccents[primaryStyle] || defaultTheme.accent;
+  const content = getBlueprintContent(blueprint.key);
+  const primaryStyle = intent.style.find((style) => blueprint.styleTags.includes(style)) ?? blueprint.styleTags[0] ?? "premium";
   const now = new Date().toISOString();
 
   return {
     id: `project-${blueprint.key}`,
-    name: copy.name,
+    name: content.name,
     blueprintKey: blueprint.key,
-    niche,
+    niche: blueprint.niche,
     intent,
     theme: {
       ...defaultTheme,
+      mode: content.palette.mode,
       style: primaryStyle,
-      accent,
-      mode: primaryStyle === "minimal" ? "light" : "dark"
+      accent: content.palette.accent || styleAccents[primaryStyle] || defaultTheme.accent,
+      secondary: content.palette.secondary,
+      surface: content.palette.surface,
+      fontFeel: content.palette.fontFeel,
+      density: blueprint.preview.visualIdentity?.includes("spacious") ? "spacious" : "balanced"
     },
     pages: blueprint.pages.map((page, pageIndex) => ({
       id: `page-${page.type}`,
@@ -113,12 +103,20 @@ export function generateProjectSchema(intent: UserIntent, blueprint: BlueprintDe
         id: `${page.type}-${section.kind}-${order + 1}`,
         kind: section.kind,
         label: section.label,
-        visible: section.required || intent.requiredFeatures.includes(section.kind),
+        visible: true,
         theme: {},
-        data: sectionContent(section.kind, niche),
+        data: {
+          ...sectionContent(section.kind, blueprint),
+          ...(section.defaultData ?? {})
+        },
         order
       }))
     })),
+    metadata: {
+      visualIdentity: blueprint.preview.visualIdentity,
+      suggestedRefinements: content.suggestedRefinements,
+      missingDetails: content.missingDetails
+    },
     createdAt: now,
     updatedAt: now
   };

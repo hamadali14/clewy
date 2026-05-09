@@ -11,7 +11,31 @@ export const knownSectionKinds: SectionKind[] = [
   "booking",
   "gallery",
   "stats",
-  "cta"
+  "cta",
+  "menu",
+  "hours",
+  "story",
+  "team",
+  "trust",
+  "dashboard",
+  "tabs",
+  "schedule",
+  "profiles",
+  "transformations",
+  "listings",
+  "filters",
+  "valuation",
+  "packages",
+  "beforeAfter",
+  "vehicleSelector",
+  "caseResults",
+  "badges",
+  "portfolio",
+  "proofing",
+  "courses",
+  "progress",
+  "instructors",
+  "map"
 ];
 
 export const defaultTheme: ThemeSettings = {
