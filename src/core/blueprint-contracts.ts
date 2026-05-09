@@ -1,0 +1,32 @@
+import type { SectionKind, ThemeSettings } from "./types";
+
+export const knownSectionKinds: SectionKind[] = [
+  "hero",
+  "services",
+  "features",
+  "pricing",
+  "testimonials",
+  "faq",
+  "contact",
+  "booking",
+  "gallery",
+  "stats",
+  "cta"
+];
+
+export const defaultTheme: ThemeSettings = {
+  mode: "dark",
+  style: "premium",
+  accent: "#5eead4",
+  radius: "round",
+  density: "balanced"
+};
+
+export const styleAccents: Record<string, string> = {
+  minimal: "#dbeafe",
+  modern: "#60a5fa",
+  luxury: "#f5c76b",
+  premium: "#5eead4",
+  dark: "#8b5cf6",
+  friendly: "#fb7185"
+};
