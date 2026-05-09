@@ -21,9 +21,11 @@ import {
   ZoomOut
 } from "lucide-react";
 import { createProjectFromPrompt, examplePrompts } from "@/core/project-workspace";
-import { refineProject } from "@/core/refinement-engine";
 import { updateTheme, toggleSectionVisibility, addSection } from "@/core/schema-diff";
 import { styleAccents } from "@/core/blueprint-contracts";
+import { currentProjectKey, loadProject, saveProject, saveProjectHistory } from "@/core/project-store";
+import { createLocalRefinementPatches } from "@/core/local-refinement";
+import { applyRefinementPatches } from "@/core/apply-patch";
 import type { DeviceMode, ProjectSchema, SectionKind, SectionNode } from "@/core/types";
 import { cn } from "@/lib/utils";
 import { PreviewRenderer } from "@/components/preview/PreviewRenderer";
@@ -33,7 +35,7 @@ import { PremiumLoader } from "@/components/ui/premium-loader";
 import { SvgIcon } from "@/components/ui/svg-icon";
 import { ThemeOrb } from "@/components/ui/theme-orb";
 
-const storageKey = "blueprint-builder-current-project";
+const storageKey = currentProjectKey;
 const quickActions = ["/premium", "/dark", "/luxury", "/add testimonials", "/pricing", "/glass", "/minimal", "/modern", "/sections", "/theme"];
 const streamSteps = [
   "Classifying intent...",
@@ -77,7 +79,7 @@ export function BuilderExperience({ initialPrompt = "" }: { initialPrompt?: stri
       const stored = localStorage.getItem(storageKey);
       if (stored) {
         try {
-          const schema = JSON.parse(stored) as ProjectSchema;
+          const schema = loadProject() ?? JSON.parse(stored) as ProjectSchema;
           setResult((current) => ({ ...current, schema }));
         } catch {
           localStorage.removeItem(storageKey);
@@ -93,11 +95,12 @@ export function BuilderExperience({ initialPrompt = "" }: { initialPrompt?: stri
   );
 
   function persist(schema: ProjectSchema) {
-    localStorage.setItem(storageKey, JSON.stringify(schema));
+    saveProject(schema);
   }
 
   function updateSchema(schema: ProjectSchema, label = "Refinement") {
     setHistory((current) => [...current.slice(-11), result.schema]);
+    saveProjectHistory([...history, result.schema]);
     setFuture([]);
     setResult((current) => ({ ...current, schema }));
     persist(schema);
@@ -160,8 +163,9 @@ export function BuilderExperience({ initialPrompt = "" }: { initialPrompt?: stri
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
-            command: normalized,
+            instruction: normalized,
             schema: result.schema,
+            blueprintKey: result.schema.blueprintKey,
             context: {
               activePageId: result.schema.pages[0]?.id,
               affectedSectionIds: result.schema.pages[0]?.sections.slice(0, 4).map((section) => section.id)
@@ -172,9 +176,10 @@ export function BuilderExperience({ initialPrompt = "" }: { initialPrompt?: stri
         updateSchema(refined.schema, normalized);
         pushMessage({ role: "ai", text: `${refined.explanation} Preview synced via ${refined.source}.` });
       } catch {
-        const refined = refineProject(normalized, result.schema);
-        updateSchema(refined.schema, normalized);
-        pushMessage({ role: "ai", text: `${refined.explanation} Preview synced locally.` });
+        const local = createLocalRefinementPatches(normalized, result.schema);
+        const schema = applyRefinementPatches(result.schema, local.patches);
+        updateSchema(schema, normalized);
+        pushMessage({ role: "ai", text: `${local.explanation} Preview synced locally.` });
       }
     }, 560);
   }

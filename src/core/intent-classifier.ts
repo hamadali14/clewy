@@ -34,6 +34,19 @@ const nicheRules: Array<{ niche: Niche; words: string[]; businessType: string }>
   { niche: "consultant", words: ["consultant", "agency", "advisor", "coach", "strategy", "expert"], businessType: "Consulting practice" }
 ];
 
+const strongIndustrySignals: Array<{ niche: Niche; words: string[] }> = [
+  { niche: "barbershop", words: ["barber", "barbershop", "haircut", "fade", "beard", "shave"] },
+  { niche: "tattoo", words: ["tattoo", "tattoo studio", "ink", "piercing"] },
+  { niche: "auto", words: ["car detailing", "ceramic coating", "auto detailing", "vehicle wash"] },
+  { niche: "fashion", words: ["fashion", "clothing", "lookbook", "apparel"] },
+  { niche: "hotel", words: ["hotel", "resort", "rooms", "suite"] },
+  { niche: "law", words: ["law firm", "lawyer", "attorney", "legal"] },
+  { niche: "restaurant", words: ["restaurant", "fine dining", "chef", "dining room"] },
+  { niche: "dental", words: ["dentist", "dental", "orthodontic"] },
+  { niche: "education", words: ["course", "academy", "school", "students"] },
+  { niche: "real-estate", words: ["real estate", "property", "realtor", "listings"] }
+];
+
 const featureRules = [
   { feature: "booking", words: ["booking", "book", "appointment", "reserve", "reservation", "schedule", "consultation"] },
   { feature: "pricing", words: ["pricing", "price", "plans", "membership", "packages", "tiers"] },
@@ -67,10 +80,14 @@ function hasAny(text: string, words: string[]) {
 
 export function classifyIntent(prompt: string): UserIntent {
   const normalized = prompt.toLowerCase().trim();
+  const strongHit = strongIndustrySignals
+    .map((rule) => ({ ...rule, hits: rule.words.filter((word) => normalized.includes(word)).length }))
+    .filter((rule) => rule.hits > 0)
+    .sort((a, b) => b.hits - a.hits)[0];
   const nicheHits = nicheRules
     .map((rule) => ({ ...rule, hits: rule.words.filter((word) => normalized.includes(word)).length }))
     .sort((a, b) => b.hits - a.hits);
-  const top = nicheHits[0];
+  const top = strongHit ? nicheHits.find((rule) => rule.niche === strongHit.niche) ?? nicheHits[0] : nicheHits[0];
   const niche = top.hits > 0 ? top.niche : "general";
   const features = featureRules.filter((rule) => hasAny(normalized, rule.words)).map((rule) => rule.feature);
   const styles: StyleToken[] = styleRules.filter((rule) => hasAny(normalized, rule.words)).map((rule) => rule.style);

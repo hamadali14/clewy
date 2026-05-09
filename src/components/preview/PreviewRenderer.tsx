@@ -7,6 +7,17 @@ import type { ProjectSchema, SectionNode } from "@/core/types";
 import { cn } from "@/lib/utils";
 import { SectionShell } from "@/components/ui/section-shell";
 import { NoiseOverlay } from "@/components/ui/noise-overlay";
+import { SmartInput } from "@/components/ui/SmartInput";
+import { BarbershopSite } from "@/blueprints/barbershop/BarbershopSite";
+import { RestaurantSite } from "@/blueprints/restaurant/RestaurantSite";
+import { TattooSite } from "@/blueprints/tattoo/TattooSite";
+import { FashionSite } from "@/blueprints/fashion/FashionSite";
+import { HotelSite } from "@/blueprints/hotel/HotelSite";
+import { GamingSite } from "@/blueprints/gaming/GamingSite";
+import { RealEstateSite } from "@/blueprints/real-estate/RealEstateSite";
+import { AutoDetailingSite } from "@/blueprints/auto-detailing/AutoDetailingSite";
+import { LawFirmSite } from "@/blueprints/law/LawFirmSite";
+import { CourseAcademySite } from "@/blueprints/course/CourseAcademySite";
 
 function text(value: unknown, fallback: string) {
   return typeof value === "string" && value.trim() ? value : fallback;
@@ -271,7 +282,7 @@ function FormSection({ section, schema }: { section: SectionNode; schema: Projec
         </div>
         <div className="grid gap-3">
           {list(section.data.fields, ["Name", "Email", "Preferred date"]).map((field) => (
-            <input key={field} aria-label={field} placeholder={field} className={cn("rounded-2xl border px-4 py-3 text-sm outline-none", t.light ? "border-slate-200 bg-white text-slate-950 placeholder:text-slate-400" : "border-white/10 bg-white/8 text-white placeholder:text-white/34")} />
+            <SmartInput key={field} aria-label={field} placeholder={field} tone={t.light ? "light" : "dark"} />
           ))}
           <PreviewButton accent={schema.theme.accent}>{text(section.data.cta, "Submit request")}</PreviewButton>
         </div>
@@ -410,6 +421,17 @@ export function PreviewRenderer({ schema, className }: { schema: ProjectSchema; 
   const [activePageId, setActivePageId] = useState(schema.pages[0]?.id ?? "page-home");
   const page = schema.pages.find((candidate) => candidate.id === activePageId) ?? schema.pages[0];
   const t = tone(schema);
+
+  if (schema.blueprintKey === "modern-barbershop") return <BarbershopSite schema={schema} />;
+  if (schema.blueprintKey === "restaurant-luxury") return <RestaurantSite schema={schema} />;
+  if (schema.blueprintKey === "tattoo-studio") return <TattooSite schema={schema} />;
+  if (["fashion-brand", "jewelry-store", "luxury-watch-store"].includes(schema.blueprintKey)) return <FashionSite schema={schema} />;
+  if (schema.blueprintKey === "hotel-resort") return <HotelSite schema={schema} />;
+  if (schema.blueprintKey === "gaming-esports") return <GamingSite schema={schema} />;
+  if (schema.blueprintKey === "real-estate-premium") return <RealEstateSite schema={schema} />;
+  if (schema.blueprintKey === "auto-detailing-pro") return <AutoDetailingSite schema={schema} />;
+  if (schema.blueprintKey === "law-firm-authority") return <LawFirmSite schema={schema} />;
+  if (schema.blueprintKey === "course-academy-modern") return <CourseAcademySite schema={schema} />;
 
   return (
     <div className={cn("relative min-h-full transition", t.page, blueprintSkin(schema), className)} style={{ ["--accent" as string]: schema.theme.accent }}>
