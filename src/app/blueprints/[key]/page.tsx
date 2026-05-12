@@ -38,6 +38,9 @@ export default function BlueprintDetailPage({ params }: { params: { key: string 
             <h1 className="mt-5 text-balance text-5xl font-semibold leading-none md:text-7xl">{blueprint.name}</h1>
             <p className="mt-6 max-w-3xl text-lg leading-8 text-white/58">{blueprint.description}</p>
             <div className="mt-6 flex flex-wrap gap-2">
+              <Link href={`/builder?blueprint=${blueprint.key}`} className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02]">
+                Build with this blueprint
+              </Link>
               <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-950">{blueprint.visualDNA.preset}</span>
               <span className="rounded-full border border-white/10 bg-white/[0.07] px-3 py-1.5 text-xs text-white/62">{blueprint.visualDNA.navigationModel}</span>
               <span className="rounded-full border border-white/10 bg-white/[0.07] px-3 py-1.5 text-xs text-white/62">quality target {blueprint.qualityScoreTarget}</span>

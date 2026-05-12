@@ -18,6 +18,7 @@ import { RealEstateSite } from "@/blueprints/real-estate/RealEstateSite";
 import { AutoDetailingSite } from "@/blueprints/auto-detailing/AutoDetailingSite";
 import { LawFirmSite } from "@/blueprints/law/LawFirmSite";
 import { CourseAcademySite } from "@/blueprints/course/CourseAcademySite";
+import { GeneratedBlueprintSite } from "@/components/preview/GeneratedBlueprintSite";
 
 function text(value: unknown, fallback: string) {
   return typeof value === "string" && value.trim() ? value : fallback;
@@ -422,6 +423,7 @@ export function PreviewRenderer({ schema, className }: { schema: ProjectSchema; 
   const page = schema.pages.find((candidate) => candidate.id === activePageId) ?? schema.pages[0];
   const t = tone(schema);
 
+  if (schema.metadata?.generatedBlueprintKey) return <GeneratedBlueprintSite schema={schema} className={className} />;
   if (schema.blueprintKey === "modern-barbershop") return <BarbershopSite schema={schema} />;
   if (schema.blueprintKey === "restaurant-luxury") return <RestaurantSite schema={schema} />;
   if (schema.blueprintKey === "tattoo-studio") return <TattooSite schema={schema} />;

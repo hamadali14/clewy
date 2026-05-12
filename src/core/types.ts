@@ -210,6 +210,24 @@ export interface ProjectSchema {
     visualIdentity?: string;
     suggestedRefinements?: string[];
     missingDetails?: string[];
+    generatedBlueprintKey?: string;
+    archetype?: string;
+    visualDNA?: {
+      preset: string;
+      layoutPattern: string;
+      heroComposition: string;
+      navigationModel: string;
+      sectionRhythm: string;
+      density: string;
+      colorMode: string;
+      palette: string[];
+      typography: string;
+      motion: string;
+      cardShape: string;
+      texture: string;
+      signature: string;
+    };
+    qualityScoreTarget?: number;
   };
 }
 

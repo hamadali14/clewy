@@ -20,7 +20,7 @@ import {
   ZoomIn,
   ZoomOut
 } from "lucide-react";
-import { createProjectFromPrompt, examplePrompts } from "@/core/project-workspace";
+import { createProjectFromBlueprintKey, createProjectFromPrompt, examplePrompts } from "@/core/project-workspace";
 import { updateTheme, toggleSectionVisibility, addSection } from "@/core/schema-diff";
 import { styleAccents } from "@/core/blueprint-contracts";
 import { currentProjectKey, loadProject, saveProject, saveProjectHistory } from "@/core/project-store";
@@ -49,9 +49,12 @@ type BuilderResult = ReturnType<typeof createProjectFromPrompt>;
 type ChatMessage = { id: string; role: "user" | "ai" | "event"; text: string; streaming?: boolean };
 type Snapshot = { id: string; label: string; schema: ProjectSchema; createdAt: string };
 
-export function BuilderExperience({ initialPrompt = "" }: { initialPrompt?: string }) {
-  const [prompt, setPrompt] = useState(initialPrompt || examplePrompts[0]);
-  const [result, setResult] = useState<BuilderResult>(() => createProjectFromPrompt(initialPrompt || examplePrompts[0]));
+export function BuilderExperience({ initialPrompt = "", initialBlueprintKey = "" }: { initialPrompt?: string; initialBlueprintKey?: string }) {
+  const startingPrompt = initialPrompt || (initialBlueprintKey ? `Build from ${initialBlueprintKey} and adapt it to my business.` : examplePrompts[0]);
+  const [prompt, setPrompt] = useState(startingPrompt);
+  const [result, setResult] = useState<BuilderResult>(() =>
+    initialBlueprintKey ? createProjectFromBlueprintKey(initialBlueprintKey, startingPrompt) : createProjectFromPrompt(startingPrompt)
+  );
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome",
@@ -74,6 +77,20 @@ export function BuilderExperience({ initialPrompt = "" }: { initialPrompt?: stri
   const [showSections, setShowSections] = useState(false);
 
   useEffect(() => {
+    if (initialBlueprintKey) {
+      const next = createProjectFromBlueprintKey(initialBlueprintKey, startingPrompt);
+      setPrompt(startingPrompt);
+      setResult(next);
+      persist(next.schema);
+      setHistory([]);
+      setFuture([]);
+      setSnapshots([
+        { id: "blueprint-start", label: `Started from ${next.match.bestBlueprint.label}`, schema: next.schema, createdAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) }
+      ]);
+      pushMessage({ role: "ai", text: `Opened ${next.match.bestBlueprint.label}. Now describe the customer's brand, offer, city, tone, or edits and I will patch this blueprint instead of starting from scratch.` });
+      setMobileTab("preview");
+      return;
+    }
     if (initialPrompt) runGeneration(initialPrompt);
     if (!initialPrompt) {
       const stored = localStorage.getItem(storageKey);
@@ -87,7 +104,7 @@ export function BuilderExperience({ initialPrompt = "" }: { initialPrompt?: stri
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialPrompt]);
+  }, [initialPrompt, initialBlueprintKey]);
 
   const visibleSections = useMemo(
     () => result.schema.pages[0].sections.filter((section) => section.visible).length,
@@ -115,7 +132,7 @@ export function BuilderExperience({ initialPrompt = "" }: { initialPrompt?: stri
     setMessages((current) => [...current, { ...message, id: `${Date.now()}-${Math.random()}` }]);
   }
 
-  function runGeneration(nextPrompt = prompt) {
+  function runGeneration(nextPrompt = prompt, blueprintKey = "") {
     setPrompt(nextPrompt);
     setIsGenerating(true);
     setActiveStep(0);
@@ -127,7 +144,7 @@ export function BuilderExperience({ initialPrompt = "" }: { initialPrompt?: stri
       }, index * 430);
     });
     window.setTimeout(() => {
-      const next = createProjectFromPrompt(nextPrompt);
+      const next = blueprintKey ? createProjectFromBlueprintKey(blueprintKey, nextPrompt) : createProjectFromPrompt(nextPrompt);
       setResult(next);
       persist(next.schema);
       setHistory([]);
@@ -138,7 +155,7 @@ export function BuilderExperience({ initialPrompt = "" }: { initialPrompt?: stri
       setIsGenerating(false);
       setActiveStep(streamSteps.length - 1);
       setSyncPulse((value) => value + 1);
-      pushMessage({ role: "ai", text: `Blueprint selected: ${next.match.bestBlueprint.label}. The live studio is ready for refinement.` });
+      pushMessage({ role: "ai", text: `Blueprint selected: ${next.match.bestBlueprint.label}. Reasons: ${next.match.reasons.slice(0, 3).join(" | ")}. The live studio is ready for refinement.` });
       setMobileTab("preview");
     }, 2450);
   }
@@ -150,7 +167,7 @@ export function BuilderExperience({ initialPrompt = "" }: { initialPrompt?: stri
     setInput("");
 
     if (trimmed.toLowerCase().startsWith("generate") || trimmed.length > 90) {
-      runGeneration(trimmed.replace(/^generate\s*/i, ""));
+      runGeneration(trimmed.replace(/^generate\s*/i, ""), result.schema.metadata?.generatedBlueprintKey ?? "");
       return;
     }
 

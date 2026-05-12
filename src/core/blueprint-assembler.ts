@@ -10,6 +10,7 @@ export interface AssembledBlueprintNode extends BlueprintPageSection {
 
 export interface AssembledBlueprintPage {
   id: string;
+  key: string;
   title: string;
   path: string;
   type: string;
@@ -59,6 +60,7 @@ export function assembleBlueprint(blueprint: BlueprintDefinition): AssembledBlue
     seedData: blueprint.seedData,
     pages: blueprint.pages.map((page, pageIndex) => ({
       id: `${blueprint.key}-${page.key}`,
+      key: page.key,
       title: page.title,
       path: page.path,
       type: page.type,
